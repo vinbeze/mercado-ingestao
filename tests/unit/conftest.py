@@ -51,31 +51,43 @@ def qr_raw_invalid_text() -> str:
 
 @pytest.fixture
 def receipt_html_complete() -> str:
-    """HTML completo de uma página de nota fiscal com todos os campos."""
+    """HTML completo de uma página de nota fiscal com todos os campos.
+    Estrutura baseada na resposta real do portal NFC-e (SEFAZ nfce_rj_v2.05).
+    """
     return """
     <html>
     <body>
-      <div class="txtTopo">SUPERMERCADO EXEMPLO LTDA</div>
+      <div id="u20" class="txtTopo">SUPERMERCADO EXEMPLO LTDA</div>
       <div class="text">CNPJ: 12.345.678/0001-90</div>
-      <span class="txt">Data de Emissão: 01/03/2026 14:30:00</span>
-      <span class="nNF">Nota Fiscal nº 000123456</span>
-      <span id="totalNota">R$ 157,83</span>
       <table id="tabResult">
-        <tbody>
-          <tr>
-            <td class="txtTit">LEITE INTEGRAL ITALAC 1L</td>
-            <td class="Rqtd">2 UN</td>
-            <td class="RvlUnit">R$ 4,99</td>
-            <td class="valor">R$ 9,98</td>
-          </tr>
-          <tr>
-            <td class="txtTit">PAO FORMA WICKBOLD 500G</td>
-            <td class="Rqtd">1 UN</td>
-            <td class="RvlUnit">R$ 8,90</td>
-            <td class="valor">R$ 8,90</td>
-          </tr>
-        </tbody>
+        <tr>
+          <td>
+            <span class="txtTit">LEITE INTEGRAL ITALAC 1L</span>
+            <span class="Rqtd"><strong>Qtde.:</strong>2</span>
+            <span class="RUN"><strong>UN: </strong>UN</span>
+            <span class="RvlUnit"><strong>Vl. Unit.:</strong>4,99</span>
+          </td>
+          <td><span class="valor">9,98</span></td>
+        </tr>
+        <tr>
+          <td>
+            <span class="txtTit">PAO FORMA WICKBOLD 500G</span>
+            <span class="Rqtd"><strong>Qtde.:</strong>1</span>
+            <span class="RUN"><strong>UN: </strong>UN</span>
+            <span class="RvlUnit"><strong>Vl. Unit.:</strong>8,90</span>
+          </td>
+          <td><span class="valor">8,90</span></td>
+        </tr>
       </table>
+      <div id="totalNota">
+        <span class="totalNumb txtMax">157,83</span>
+      </div>
+      <ul>
+        <li>
+          <strong>Número: </strong>000123456
+          <strong>Emissão: </strong>01/03/2026 14:30:00
+        </li>
+      </ul>
     </body>
     </html>
     """
@@ -88,16 +100,19 @@ def receipt_html_missing_fields() -> str:
     <html>
     <body>
       <div class="txtTopo">MERCADO SEM DADOS LTDA</div>
-      <span id="totalNota">R$ 50,00</span>
+      <div id="totalNota">
+        <span class="totalNumb txtMax">50,00</span>
+      </div>
       <table id="tabResult">
-        <tbody>
-          <tr>
-            <td class="txtTit">PRODUTO GENERICO</td>
-            <td class="Rqtd">1 UN</td>
-            <td class="RvlUnit">R$ 50,00</td>
-            <td class="valor">R$ 50,00</td>
-          </tr>
-        </tbody>
+        <tr>
+          <td>
+            <span class="txtTit">PRODUTO GENERICO</span>
+            <span class="Rqtd"><strong>Qtde.:</strong>1</span>
+            <span class="RUN"><strong>UN: </strong>UN</span>
+            <span class="RvlUnit"><strong>Vl. Unit.:</strong>50,00</span>
+          </td>
+          <td><span class="valor">50,00</span></td>
+        </tr>
       </table>
     </body>
     </html>
@@ -112,12 +127,13 @@ def receipt_html_without_items() -> str:
     <body>
       <div class="txtTopo">SUPERMERCADO VAZIO LTDA</div>
       <div class="text">CNPJ: 99.999.999/0001-99</div>
-      <span class="txt">Data de Emissão: 10/02/2026 09:00:00</span>
-      <span id="totalNota">R$ 0,00</span>
-      <table id="tabResult">
-        <tbody>
-        </tbody>
-      </table>
+      <div id="totalNota">
+        <span class="totalNumb txtMax">0,00</span>
+      </div>
+      <ul>
+        <li><strong>Emissão: </strong>10/02/2026 09:00:00</li>
+      </ul>
+      <table id="tabResult"></table>
     </body>
     </html>
     """

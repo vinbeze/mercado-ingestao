@@ -102,14 +102,16 @@ class TestHtmlReceiptParserExtractItems:
     ) -> None:
         html = """
         <html><body>
-          <table id="tabResult"><tbody>
+          <table id="tabResult">
             <tr>
-              <td class="txtTit">ITEM SEM UNIDADE</td>
-              <td class="Rqtd">1</td>
-              <td class="RvlUnit">R$ 5,00</td>
-              <td class="valor">R$ 5,00</td>
+              <td>
+                <span class="txtTit">ITEM SEM UNIDADE</span>
+                <span class="Rqtd"><strong>Qtde.:</strong>1</span>
+                <span class="RvlUnit"><strong>Vl. Unit.:</strong>5,00</span>
+              </td>
+              <td><span class="valor">5,00</span></td>
             </tr>
-          </tbody></table>
+          </table>
         </body></html>
         """
         items = parser.extract_items(html)
@@ -122,13 +124,15 @@ class TestHtmlReceiptParserExtractItems:
     ) -> None:
         html = """
         <html><body>
-          <table id="tabResult"><tbody>
+          <table id="tabResult">
             <tr>
-              <td class="txtTit">ITEM SEM QUANTIDADE</td>
-              <td class="RvlUnit">R$ 3,50</td>
-              <td class="valor">R$ 3,50</td>
+              <td>
+                <span class="txtTit">ITEM SEM QUANTIDADE</span>
+                <span class="RvlUnit"><strong>Vl. Unit.:</strong>3,50</span>
+              </td>
+              <td><span class="valor">3,50</span></td>
             </tr>
-          </tbody></table>
+          </table>
         </body></html>
         """
         items = parser.extract_items(html)
