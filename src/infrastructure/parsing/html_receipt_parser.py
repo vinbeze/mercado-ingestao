@@ -12,46 +12,56 @@ def _parse_currency(text: str) -> Decimal | None:
     if not text:
         return None
     try:
-        cleaned = text.replace("R$", "").strip()
-        cleaned = cleaned.replace(".", "").replace(",", ".")
+        cleaned = re.sub(r"[^\d,]", "", text).replace(",", ".")
         return Decimal(cleaned)
     except (InvalidOperation, ValueError):
         return None
+
+
+def _after_colon(text: str) -> str:
+    """Retorna o trecho após o último ':' com espaços removidos."""
+    parts = text.split(":")
+    return parts[-1].strip() if len(parts) > 1 else text.strip()
 
 
 class HtmlReceiptParser(ReceiptParser):
     def extract_header(self, html: str) -> ReceiptHeader:
         soup = BeautifulSoup(html, "html.parser")
 
+        # Nome da loja: <div class="txtTopo"> ou <div id="u20" class="txtTopo">
         store_name_tag = soup.find("div", class_="txtTopo")
         store_name = store_name_tag.get_text(strip=True) if store_name_tag else None
 
+        # CNPJ: primeiro div.text que contenha padrão de CNPJ
         store_document = None
-        doc_tag = soup.find("div", class_="text")
-        if doc_tag:
+        for doc_tag in soup.find_all("div", class_="text"):
             text = doc_tag.get_text(strip=True)
             match = re.search(r"\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}", text)
             if match:
                 store_document = match.group()
+                break
 
+        # Data de emissão: dentro de <li> que contém "Emissão:"
         purchase_date = None
-        date_tag = soup.find("span", class_="txt")
-        if date_tag:
-            text = date_tag.get_text(strip=True)
-            match = re.search(r"\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}", text)
+        for li in soup.find_all("li"):
+            text = li.get_text(" ", strip=True)
+            match = re.search(r"Emiss[aã]o:\s*(\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2})", text)
             if match:
-                purchase_date = match.group()
+                purchase_date = match.group(1)
+                break
 
+        # Número da nota: dentro de <li> que contém "Número:"
         receipt_number = None
-        nf_tag = soup.find("span", class_="nNF")
-        if nf_tag:
-            text = nf_tag.get_text(strip=True)
-            match = re.search(r"\d+", text)
+        for li in soup.find_all("li"):
+            text = li.get_text(" ", strip=True)
+            match = re.search(r"N[uú]mero:\s*(\d+)", text)
             if match:
-                receipt_number = match.group()
+                receipt_number = match.group(1)
+                break
 
+        # Total: span com classe "txtMax" (ex: <span class="totalNumb txtMax">22,98</span>)
         total_amount = None
-        total_tag = soup.find("span", id="totalNota")
+        total_tag = soup.find("span", class_="txtMax")
         if total_tag:
             total_amount = _parse_currency(total_tag.get_text(strip=True))
 
@@ -70,30 +80,37 @@ class HtmlReceiptParser(ReceiptParser):
             return []
 
         items: list[RawReceiptItem] = []
-        rows = table.select("tbody tr")
-        for line_number, row in enumerate(rows, start=1):
-            desc_td = row.find("td", class_="txtTit")
-            if not desc_td:
+        for line_number, row in enumerate(table.find_all("tr"), start=1):
+            # Descrição: <span class="txtTit">
+            desc_span = row.find("span", class_="txtTit")
+            if not desc_span:
                 continue
-            raw_description = desc_td.get_text(strip=True)
+            raw_description = desc_span.get_text(strip=True)
 
+            # Quantidade: <span class="Rqtd"> → "Qtde.:1" ou "Qtde.: 1,500"
             raw_quantity = None
+            rqtd_span = row.find("span", class_="Rqtd")
+            if rqtd_span:
+                after = _after_colon(rqtd_span.get_text(strip=True))
+                raw_quantity = after or None
+
+            # Unidade: <span class="RUN"> → "UN: UN" ou "UN: KG"
             raw_unit = None
-            rqtd_td = row.find("td", class_="Rqtd")
-            if rqtd_td:
-                parts = rqtd_td.get_text(strip=True).split()
-                raw_quantity = parts[0] if parts else None
-                raw_unit = parts[1] if len(parts) > 1 else None
+            run_span = row.find("span", class_="RUN")
+            if run_span:
+                raw_unit = _after_colon(run_span.get_text(strip=True)) or None
 
+            # Preço unitário: <span class="RvlUnit"> → "Vl. Unit.:22,98"
             unit_price = None
-            unit_td = row.find("td", class_="RvlUnit")
-            if unit_td:
-                unit_price = _parse_currency(unit_td.get_text(strip=True))
+            unit_span = row.find("span", class_="RvlUnit")
+            if unit_span:
+                unit_price = _parse_currency(_after_colon(unit_span.get_text(strip=True)))
 
+            # Preço total: <span class="valor">
             total_price = None
-            valor_td = row.find("td", class_="valor")
-            if valor_td:
-                total_price = _parse_currency(valor_td.get_text(strip=True))
+            valor_span = row.find("span", class_="valor")
+            if valor_span:
+                total_price = _parse_currency(valor_span.get_text(strip=True))
 
             items.append(
                 RawReceiptItem(
