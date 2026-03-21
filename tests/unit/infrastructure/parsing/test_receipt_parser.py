@@ -4,6 +4,7 @@ Testes unitários para HtmlReceiptParser.
 Testa extract_header e extract_items usando HTML simulado.
 Nenhum acesso externo é necessário.
 """
+
 from decimal import Decimal
 
 import pytest
@@ -20,6 +21,7 @@ def parser() -> ReceiptParser:
 # ---------------------------------------------------------------------------
 # extract_header
 # ---------------------------------------------------------------------------
+
 
 class TestHtmlReceiptParserExtractHeader:
     def test_extract_header_returns_all_fields_when_html_is_complete(
@@ -71,6 +73,7 @@ class TestHtmlReceiptParserExtractHeader:
 # ---------------------------------------------------------------------------
 # extract_items
 # ---------------------------------------------------------------------------
+
 
 class TestHtmlReceiptParserExtractItems:
     def test_extract_items_returns_all_items_correctly(

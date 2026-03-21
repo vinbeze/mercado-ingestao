@@ -3,6 +3,7 @@ Testes unitários para DictionaryProductNormalizer.
 
 Nenhuma dependência externa. O normalizador usa dicionários/regras internas.
 """
+
 from decimal import Decimal
 
 import pytest
@@ -23,6 +24,7 @@ def normalizer() -> ProductNormalizer:
 # normalize_description
 # ---------------------------------------------------------------------------
 
+
 class TestDictionaryProductNormalizerNormalizeDescription:
     def test_normalize_description_cleans_extra_whitespace(
         self, normalizer: ProductNormalizer
@@ -38,7 +40,10 @@ class TestDictionaryProductNormalizerNormalizeDescription:
         result = normalizer.normalize_description("LEITE INTEGRAL ITALAC 1L")
 
         # Deve retornar em Title Case ou lower, não tudo em maiúsculas
-        assert result.canonical_name != result.canonical_name.upper() or len(result.canonical_name) == 0
+        assert (
+            result.canonical_name != result.canonical_name.upper()
+            or len(result.canonical_name) == 0
+        )
 
     def test_normalize_description_identifies_brand_when_present(
         self, normalizer: ProductNormalizer
@@ -73,6 +78,7 @@ class TestDictionaryProductNormalizerNormalizeDescription:
 # ---------------------------------------------------------------------------
 # normalize_item
 # ---------------------------------------------------------------------------
+
 
 class TestDictionaryProductNormalizerNormalizeItem:
     def test_normalize_item_converts_textual_quantity_to_numeric(

@@ -3,6 +3,7 @@ Testes unitários para SqlAlchemyProcessedReceiptRepository.
 
 A sessão do SQLAlchemy é mockada — nenhum banco real é utilizado.
 """
+
 from decimal import Decimal
 from unittest.mock import MagicMock
 

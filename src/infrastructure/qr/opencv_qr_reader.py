@@ -1,6 +1,7 @@
+from typing import cast
+
 from src.application.dtos.qr_decode_result import QRDecodeResult
 from src.domain.ports.qr_code_reader import QRCodeReader
-
 
 SUPPORTED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
@@ -19,7 +20,7 @@ def decode_qr_from_bytes(image_bytes: bytes) -> bytes | None:
     decoded_objects = pyzbar_decode(img)
     if not decoded_objects:
         return None
-    return decoded_objects[0].data
+    return cast(bytes, decoded_objects[0].data)
 
 
 class OpenCVQRReader(QRCodeReader):

@@ -3,7 +3,8 @@ Testes unitários para SqlAlchemyRawDocumentRepository.
 
 A sessão do SQLAlchemy é mockada — nenhum banco real é utilizado.
 """
-from unittest.mock import MagicMock, call
+
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -42,8 +43,8 @@ class TestSqlAlchemyRawDocumentRepositorySave:
         self, repository: RawDocumentRepository, mock_session: MagicMock
     ) -> None:
         # Simular que o ORM atribui um ID ao objeto após commit
-        def set_id(obj):
-            obj.id = 42
+        def set_id(obj: object) -> None:
+            obj.id = 42  # type: ignore[attr-defined]
 
         mock_session.add.side_effect = set_id
 

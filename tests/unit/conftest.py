@@ -6,10 +6,10 @@ from src.domain.entities.normalized_receipt_item import NormalizedReceiptItem
 from src.domain.entities.raw_receipt_item import RawReceiptItem
 from src.domain.entities.receipt import ReceiptHeader
 
-
 # ---------------------------------------------------------------------------
 # Image fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def image_with_valid_qr() -> bytes:
@@ -33,6 +33,7 @@ def invalid_image_bytes() -> bytes:
 # QR / URL fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def qr_raw_valid_url() -> str:
     """URL válida extraída de um QR Code de nota fiscal."""
@@ -48,6 +49,7 @@ def qr_raw_invalid_text() -> str:
 # ---------------------------------------------------------------------------
 # HTML fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def receipt_html_complete() -> str:
@@ -143,6 +145,7 @@ def receipt_html_without_items() -> str:
 # Item fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def raw_item_examples() -> list[RawReceiptItem]:
     return [
@@ -200,6 +203,7 @@ def normalized_item_examples() -> list[NormalizedReceiptItem]:
 # ---------------------------------------------------------------------------
 # Header fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def valid_receipt_header() -> ReceiptHeader:

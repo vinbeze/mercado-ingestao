@@ -5,7 +5,6 @@ from src.domain.entities.product_normalization_result import ProductNormalizatio
 from src.domain.entities.raw_receipt_item import RawReceiptItem
 from src.domain.ports.product_normalizer import ProductNormalizer
 
-
 _BRAND_RULES: dict[str, str] = {
     "ITALAC": "Italac",
     "WICKBOLD": "Wickbold",

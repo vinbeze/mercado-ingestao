@@ -1,6 +1,10 @@
+from typing import cast
+
 from sqlalchemy.orm import Session
 
-from src.application.dtos.save_processed_receipt_result import SaveProcessedReceiptResult
+from src.application.dtos.save_processed_receipt_result import (
+    SaveProcessedReceiptResult,
+)
 from src.domain.entities.normalized_receipt_item import NormalizedReceiptItem
 from src.domain.entities.receipt import ReceiptHeader
 from src.domain.ports.processed_receipt_repository import ProcessedReceiptRepository
@@ -45,7 +49,9 @@ class SqlAlchemyProcessedReceiptRepository(ProcessedReceiptRepository):
 
             self._session.commit()
             self._session.refresh(receipt)
-            return SaveProcessedReceiptResult(success=True, receipt_id=receipt.id, items_saved=len(items))
+            return SaveProcessedReceiptResult(
+                success=True, receipt_id=cast(int, receipt.id), items_saved=len(items)
+            )
         except Exception:
             self._session.rollback()
             return SaveProcessedReceiptResult(success=False, items_saved=0)
