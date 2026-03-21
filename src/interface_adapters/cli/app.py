@@ -94,7 +94,7 @@ _SAFETY_WORD = "APAGAR"
 def clear_db() -> None:
     """Remove todos os dados do banco de dados."""
     typer.echo("⚠️  ATENÇÃO: esta operação é irreversível e apagará todos os dados.")
-    typer.echo(f'Para confirmar, digite a palavra de segurança: {_SAFETY_WORD}')
+    typer.echo(f"Para confirmar, digite a palavra de segurança: {_SAFETY_WORD}")
 
     entered = typer.prompt("Palavra de segurança")
     if entered != _SAFETY_WORD:
