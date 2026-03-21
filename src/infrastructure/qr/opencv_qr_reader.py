@@ -1,7 +1,6 @@
 from src.application.dtos.qr_decode_result import QRDecodeResult
 from src.domain.ports.qr_code_reader import QRCodeReader
 
-
 SUPPORTED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 

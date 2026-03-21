@@ -3,7 +3,8 @@ Testes unitários para SqlAlchemyRawDocumentRepository.
 
 A sessão do SQLAlchemy é mockada — nenhum banco real é utilizado.
 """
-from unittest.mock import MagicMock, call
+
+from unittest.mock import MagicMock
 
 import pytest
 

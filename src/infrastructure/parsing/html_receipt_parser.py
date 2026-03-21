@@ -45,7 +45,9 @@ class HtmlReceiptParser(ReceiptParser):
         purchase_date = None
         for li in soup.find_all("li"):
             text = li.get_text(" ", strip=True)
-            match = re.search(r"Emiss[aã]o:\s*(\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2})", text)
+            match = re.search(
+                r"Emiss[aã]o:\s*(\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2})", text
+            )
             if match:
                 purchase_date = match.group(1)
                 break
@@ -104,7 +106,9 @@ class HtmlReceiptParser(ReceiptParser):
             unit_price = None
             unit_span = row.find("span", class_="RvlUnit")
             if unit_span:
-                unit_price = _parse_currency(_after_colon(unit_span.get_text(strip=True)))
+                unit_price = _parse_currency(
+                    _after_colon(unit_span.get_text(strip=True))
+                )
 
             # Preço total: <span class="valor">
             total_price = None

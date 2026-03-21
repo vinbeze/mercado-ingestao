@@ -3,7 +3,8 @@ Testes unitários para OpenCVQRReader.
 
 OpenCV e pyzbar são mockados para isolar a lógica do adaptador.
 """
-from unittest.mock import MagicMock, patch
+
+from unittest.mock import patch
 
 import pytest
 

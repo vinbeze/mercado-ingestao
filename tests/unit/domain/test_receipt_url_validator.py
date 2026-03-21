@@ -4,6 +4,7 @@ Testes unitários para ReceiptURLValidator.
 O validador é uma regra de domínio pura. Testa-se a implementação concreta
 (SimpleReceiptURLValidator), que não possui dependências externas.
 """
+
 import pytest
 
 from src.domain.ports.receipt_url_validator import ReceiptURLValidator
@@ -18,13 +19,21 @@ def validator() -> ReceiptURLValidator:
 
 
 class TestReceiptURLValidatorValidate:
-    def test_validate_accepts_valid_http_url(self, validator: ReceiptURLValidator) -> None:
-        result = validator.validate("http://www.sefaz.go.gov.br/nfeweb/consulta?chave=123")
+    def test_validate_accepts_valid_http_url(
+        self, validator: ReceiptURLValidator
+    ) -> None:
+        result = validator.validate(
+            "http://www.sefaz.go.gov.br/nfeweb/consulta?chave=123"
+        )
 
         assert result.is_valid is True
 
-    def test_validate_accepts_valid_https_url(self, validator: ReceiptURLValidator) -> None:
-        result = validator.validate("https://www.sefaz.rs.gov.br/NFCE/NFCE-COM.aspx?chNFe=999")
+    def test_validate_accepts_valid_https_url(
+        self, validator: ReceiptURLValidator
+    ) -> None:
+        result = validator.validate(
+            "https://www.sefaz.rs.gov.br/NFCE/NFCE-COM.aspx?chNFe=999"
+        )
 
         assert result.is_valid is True
 
@@ -37,7 +46,9 @@ class TestReceiptURLValidatorValidate:
         assert result.is_valid is True
         assert result.normalized_url == raw.strip()
 
-    def test_validate_rejects_empty_string(self, validator: ReceiptURLValidator) -> None:
+    def test_validate_rejects_empty_string(
+        self, validator: ReceiptURLValidator
+    ) -> None:
         result = validator.validate("")
 
         assert result.is_valid is False

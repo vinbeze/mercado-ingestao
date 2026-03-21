@@ -1,12 +1,12 @@
 from src.application.dtos.process_receipt_command import ProcessReceiptCommand
 from src.application.dtos.process_receipt_result import ProcessReceiptResult
+from src.domain.ports.processed_receipt_repository import ProcessedReceiptRepository
+from src.domain.ports.product_normalizer import ProductNormalizer
 from src.domain.ports.qr_code_reader import QRCodeReader
-from src.domain.ports.receipt_url_validator import ReceiptURLValidator
+from src.domain.ports.raw_document_repository import RawDocumentRepository
 from src.domain.ports.receipt_page_fetcher import ReceiptPageFetcher
 from src.domain.ports.receipt_parser import ReceiptParser
-from src.domain.ports.product_normalizer import ProductNormalizer
-from src.domain.ports.raw_document_repository import RawDocumentRepository
-from src.domain.ports.processed_receipt_repository import ProcessedReceiptRepository
+from src.domain.ports.receipt_url_validator import ReceiptURLValidator
 
 
 class ProcessReceiptImageUseCase:
@@ -41,7 +41,9 @@ class ProcessReceiptImageUseCase:
             errors.append(url_result.error or "URL extraída do QR Code é inválida")
             return ProcessReceiptResult(success=False, items_count=0, errors=errors)
 
-        fetch_result = self._page_fetcher.fetch(url_result.normalized_url, timeout_seconds=30)
+        fetch_result = self._page_fetcher.fetch(
+            url_result.normalized_url, timeout_seconds=30
+        )
         if not fetch_result.success:
             errors.append(fetch_result.error or "Falha ao buscar página da nota fiscal")
             return ProcessReceiptResult(success=False, items_count=0, errors=errors)

@@ -11,5 +11,4 @@ class RawDocumentRepository(ABC):
         qr_url: str,
         html: str,
         status: str,
-    ) -> SaveRawDocumentResult:
-        ...
+    ) -> SaveRawDocumentResult: ...

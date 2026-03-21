@@ -31,4 +31,5 @@ def get_session() -> Session:
 
 def create_tables() -> None:
     from src.infrastructure.persistence.sqlalchemy.models.models import Base
+
     Base.metadata.create_all(bind=engine)

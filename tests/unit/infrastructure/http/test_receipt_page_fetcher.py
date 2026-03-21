@@ -3,6 +3,7 @@ Testes unitários para HttpxReceiptPageFetcher.
 
 httpx.Client é mockado para evitar acesso real à rede.
 """
+
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -17,15 +18,21 @@ def fetcher() -> ReceiptPageFetcher:
 
 
 class TestHttpxReceiptPageFetcherFetch:
-    def test_fetch_returns_success_on_http_200(self, fetcher: ReceiptPageFetcher) -> None:
+    def test_fetch_returns_success_on_http_200(
+        self, fetcher: ReceiptPageFetcher
+    ) -> None:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.text = "<html>nota</html>"
         mock_response.url = "https://sefaz.rs.gov.br/nfce?chNFe=1"
 
-        with patch("src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
-                   return_value=mock_response):
-            result = fetcher.fetch("https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=10)
+        with patch(
+            "src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
+            return_value=mock_response,
+        ):
+            result = fetcher.fetch(
+                "https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=10
+            )
 
         assert result.success is True
 
@@ -36,9 +43,13 @@ class TestHttpxReceiptPageFetcherFetch:
         mock_response.text = html_content
         mock_response.url = "https://sefaz.rs.gov.br/nfce?chNFe=1"
 
-        with patch("src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
-                   return_value=mock_response):
-            result = fetcher.fetch("https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=10)
+        with patch(
+            "src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
+            return_value=mock_response,
+        ):
+            result = fetcher.fetch(
+                "https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=10
+            )
 
         assert result.html == html_content
 
@@ -47,9 +58,13 @@ class TestHttpxReceiptPageFetcherFetch:
     ) -> None:
         import httpx as httpx_lib
 
-        with patch("src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
-                   side_effect=httpx_lib.TimeoutException("timeout")):
-            result = fetcher.fetch("https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=1)
+        with patch(
+            "src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
+            side_effect=httpx_lib.TimeoutException("timeout"),
+        ):
+            result = fetcher.fetch(
+                "https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=1
+            )
 
         assert result.success is False
         assert result.error is not None
@@ -60,9 +75,13 @@ class TestHttpxReceiptPageFetcherFetch:
         mock_response.text = "Not Found"
         mock_response.url = "https://sefaz.rs.gov.br/nfce?chNFe=1"
 
-        with patch("src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
-                   return_value=mock_response):
-            result = fetcher.fetch("https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=10)
+        with patch(
+            "src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
+            return_value=mock_response,
+        ):
+            result = fetcher.fetch(
+                "https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=10
+            )
 
         assert result.success is False
         assert result.status_code == 404
@@ -73,9 +92,13 @@ class TestHttpxReceiptPageFetcherFetch:
         mock_response.text = "Internal Server Error"
         mock_response.url = "https://sefaz.rs.gov.br/nfce?chNFe=1"
 
-        with patch("src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
-                   return_value=mock_response):
-            result = fetcher.fetch("https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=10)
+        with patch(
+            "src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
+            return_value=mock_response,
+        ):
+            result = fetcher.fetch(
+                "https://sefaz.rs.gov.br/nfce?chNFe=1", timeout_seconds=10
+            )
 
         assert result.success is False
         assert result.status_code == 500
@@ -91,8 +114,10 @@ class TestHttpxReceiptPageFetcherFetch:
         mock_response.text = "<html>nota</html>"
         mock_response.url = redirected_url
 
-        with patch("src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
-                   return_value=mock_response):
+        with patch(
+            "src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
+            return_value=mock_response,
+        ):
             result = fetcher.fetch(original_url, timeout_seconds=10)
 
         assert result.final_url == redirected_url
@@ -102,8 +127,10 @@ class TestHttpxReceiptPageFetcherFetch:
     ) -> None:
         import httpx as httpx_lib
 
-        with patch("src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
-                   side_effect=httpx_lib.InvalidURL("URL inválida")):
+        with patch(
+            "src.infrastructure.http.httpx_receipt_page_fetcher.httpx.get",
+            side_effect=httpx_lib.InvalidURL("URL inválida"),
+        ):
             result = fetcher.fetch("nao_e_uma_url", timeout_seconds=10)
 
         assert result.success is False

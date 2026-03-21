@@ -4,15 +4,16 @@ Testes unitários para ProcessReceiptImageUseCase.
 Todos os ports são mockados via pytest-mock.
 Valida-se a orquestração do fluxo, a ordem de chamadas e a composição do resultado.
 """
+
 from decimal import Decimal
 from unittest.mock import MagicMock
-
-import pytest
 
 from src.application.dtos.fetch_receipt_result import FetchReceiptResult
 from src.application.dtos.process_receipt_command import ProcessReceiptCommand
 from src.application.dtos.qr_decode_result import QRDecodeResult
-from src.application.dtos.save_processed_receipt_result import SaveProcessedReceiptResult
+from src.application.dtos.save_processed_receipt_result import (
+    SaveProcessedReceiptResult,
+)
 from src.application.dtos.save_raw_document_result import SaveRawDocumentResult
 from src.application.dtos.url_validation_result import URLValidationResult
 from src.application.use_cases.process_receipt_image_use_case import (
@@ -22,10 +23,10 @@ from src.domain.entities.normalized_receipt_item import NormalizedReceiptItem
 from src.domain.entities.raw_receipt_item import RawReceiptItem
 from src.domain.entities.receipt import ReceiptHeader
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_use_case(
     qr_reader=None,
@@ -95,6 +96,7 @@ def _valid_header() -> ReceiptHeader:
 # Testes
 # ---------------------------------------------------------------------------
 
+
 class TestProcessReceiptImageUseCaseExecute:
     def test_execute_completes_full_flow_when_all_steps_succeed(self) -> None:
         qr_reader = MagicMock()
@@ -123,7 +125,9 @@ class TestProcessReceiptImageUseCaseExecute:
         normalizer.normalize_item.return_value = _valid_normalized_items()[0]
 
         raw_doc_repo = MagicMock()
-        raw_doc_repo.save.return_value = SaveRawDocumentResult(success=True, document_id=1)
+        raw_doc_repo.save.return_value = SaveRawDocumentResult(
+            success=True, document_id=1
+        )
 
         processed_repo = MagicMock()
         processed_repo.save.return_value = SaveProcessedReceiptResult(
@@ -247,7 +251,9 @@ class TestProcessReceiptImageUseCaseExecute:
         )
         page_fetcher = MagicMock()
         page_fetcher.fetch.return_value = FetchReceiptResult(
-            success=True, status_code=200, html="<html>nota</html>",
+            success=True,
+            status_code=200,
+            html="<html>nota</html>",
             final_url="https://sefaz.rs.gov.br/nfce?chNFe=1",
         )
         parser = MagicMock()
@@ -258,7 +264,9 @@ class TestProcessReceiptImageUseCaseExecute:
         normalizer.normalize_item.side_effect = ValueError("Falha ao normalizar item")
 
         raw_doc_repo = MagicMock()
-        raw_doc_repo.save.return_value = SaveRawDocumentResult(success=True, document_id=1)
+        raw_doc_repo.save.return_value = SaveRawDocumentResult(
+            success=True, document_id=1
+        )
         processed_repo = MagicMock()
         processed_repo.save.return_value = SaveProcessedReceiptResult(
             success=True, receipt_id=10, items_saved=0
@@ -290,7 +298,10 @@ class TestProcessReceiptImageUseCaseExecute:
         result = use_case.execute(_default_command())
 
         assert isinstance(result.errors, list)
-        assert any("QR" in e or "qr" in e.lower() or "imagem" in e.lower() for e in result.errors)
+        assert any(
+            "QR" in e or "qr" in e.lower() or "imagem" in e.lower()
+            for e in result.errors
+        )
 
     def test_execute_returns_items_count_consistent_with_processed_items(self) -> None:
         qr_reader = MagicMock()
@@ -303,15 +314,29 @@ class TestProcessReceiptImageUseCaseExecute:
         )
         page_fetcher = MagicMock()
         page_fetcher.fetch.return_value = FetchReceiptResult(
-            success=True, status_code=200, html="<html>nota</html>",
+            success=True,
+            status_code=200,
+            html="<html>nota</html>",
             final_url="https://sefaz.rs.gov.br/nfce?chNFe=1",
         )
 
         two_raw_items = [
-            RawReceiptItem(line_number=1, raw_description="ITEM A", raw_quantity="1", raw_unit="UN",
-                           unit_price=Decimal("1.00"), total_price=Decimal("1.00")),
-            RawReceiptItem(line_number=2, raw_description="ITEM B", raw_quantity="2", raw_unit="UN",
-                           unit_price=Decimal("2.00"), total_price=Decimal("4.00")),
+            RawReceiptItem(
+                line_number=1,
+                raw_description="ITEM A",
+                raw_quantity="1",
+                raw_unit="UN",
+                unit_price=Decimal("1.00"),
+                total_price=Decimal("1.00"),
+            ),
+            RawReceiptItem(
+                line_number=2,
+                raw_description="ITEM B",
+                raw_quantity="2",
+                raw_unit="UN",
+                unit_price=Decimal("2.00"),
+                total_price=Decimal("4.00"),
+            ),
         ]
         parser = MagicMock()
         parser.extract_header.return_value = _valid_header()
@@ -319,12 +344,17 @@ class TestProcessReceiptImageUseCaseExecute:
 
         normalizer = MagicMock()
         normalizer.normalize_item.return_value = NormalizedReceiptItem(
-            canonical_name="Item Genérico", quantity=Decimal("1"), unit="UN",
-            unit_price=Decimal("1.00"), total_price=Decimal("1.00"),
+            canonical_name="Item Genérico",
+            quantity=Decimal("1"),
+            unit="UN",
+            unit_price=Decimal("1.00"),
+            total_price=Decimal("1.00"),
         )
 
         raw_doc_repo = MagicMock()
-        raw_doc_repo.save.return_value = SaveRawDocumentResult(success=True, document_id=1)
+        raw_doc_repo.save.return_value = SaveRawDocumentResult(
+            success=True, document_id=1
+        )
         processed_repo = MagicMock()
         processed_repo.save.return_value = SaveProcessedReceiptResult(
             success=True, receipt_id=10, items_saved=2
