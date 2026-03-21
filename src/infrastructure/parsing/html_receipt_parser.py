@@ -1,7 +1,7 @@
 import re
 from decimal import Decimal, InvalidOperation
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from src.domain.entities.raw_receipt_item import RawReceiptItem
 from src.domain.entities.receipt import ReceiptHeader
@@ -78,7 +78,7 @@ class HtmlReceiptParser(ReceiptParser):
     def extract_items(self, html: str) -> list[RawReceiptItem]:
         soup = BeautifulSoup(html, "html.parser")
         table = soup.find("table", id="tabResult")
-        if not table:
+        if not table or not isinstance(table, Tag):
             return []
 
         items: list[RawReceiptItem] = []

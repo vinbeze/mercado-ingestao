@@ -6,6 +6,7 @@ Valida-se a orquestração do fluxo, a ordem de chamadas e a composição do res
 """
 
 from decimal import Decimal
+from typing import Any
 from unittest.mock import MagicMock
 
 from src.application.dtos.fetch_receipt_result import FetchReceiptResult
@@ -29,13 +30,13 @@ from src.domain.entities.receipt import ReceiptHeader
 
 
 def _make_use_case(
-    qr_reader=None,
-    url_validator=None,
-    page_fetcher=None,
-    parser=None,
-    normalizer=None,
-    raw_doc_repo=None,
-    processed_repo=None,
+    qr_reader: Any = None,
+    url_validator: Any = None,
+    page_fetcher: Any = None,
+    parser: Any = None,
+    normalizer: Any = None,
+    raw_doc_repo: Any = None,
+    processed_repo: Any = None,
 ) -> ProcessReceiptImageUseCase:
     return ProcessReceiptImageUseCase(
         qr_reader=qr_reader or MagicMock(),

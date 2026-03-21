@@ -36,11 +36,13 @@ class ProcessReceiptImageUseCase:
             errors.append(qr_result.error or "QR Code não encontrado na imagem")
             return ProcessReceiptResult(success=False, items_count=0, errors=errors)
 
+        assert qr_result.raw_value is not None
         url_result = self._url_validator.validate(qr_result.raw_value)
         if not url_result.is_valid:
             errors.append(url_result.error or "URL extraída do QR Code é inválida")
             return ProcessReceiptResult(success=False, items_count=0, errors=errors)
 
+        assert url_result.normalized_url is not None
         fetch_result = self._page_fetcher.fetch(
             url_result.normalized_url, timeout_seconds=30
         )

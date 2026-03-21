@@ -30,7 +30,7 @@ class SqlAlchemyRawDocumentRepository(RawDocumentRepository):
             self._session.add(obj)
             self._session.commit()
             self._session.refresh(obj)
-            return SaveRawDocumentResult(success=True, document_id=obj.id)
+            return SaveRawDocumentResult(success=True, document_id=int(obj.id))
         except Exception:
             self._session.rollback()
             return SaveRawDocumentResult(success=False)
