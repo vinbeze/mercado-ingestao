@@ -25,12 +25,7 @@ jobs:
           tag_prefix: "v"
 
       - name: Update version in pyproject.toml
-        run: |
-          sed -i 's/^version = ".*"/version = "${{ steps.tag.outputs.new_version }}"/' pyproject.toml
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add pyproject.toml
-          git diff --cached --quiet || (git commit -m "chore: bump version to ${{ steps.tag.outputs.new_version }}" && git push)
+        run: sed -i 's/^version = ".*"/version = "${{ steps.tag.outputs.new_version }}"/' pyproject.toml
 
       - name: Set up Python
         uses: actions/setup-python@v5
