@@ -24,6 +24,25 @@ jobs:
           default_bump: patch
           tag_prefix: "v"
 
+      - name: Update version in pyproject.toml
+        run: |
+          sed -i 's/^version = ".*"/version = "${{ steps.tag.outputs.new_version }}"/' pyproject.toml
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pyproject.toml
+          git commit -m "chore: bump version to ${{ steps.tag.outputs.new_version }}"
+          git push
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build distribution
+        run: |
+          pip install build
+          python -m build
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -32,3 +51,4 @@ jobs:
           body: ${{ steps.tag.outputs.changelog }}
           generate_release_notes: true
           make_latest: true
+          files: dist/*
