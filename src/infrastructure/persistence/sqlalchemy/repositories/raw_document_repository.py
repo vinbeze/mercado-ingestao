@@ -1,3 +1,5 @@
+from typing import cast
+
 from sqlalchemy.orm import Session
 
 from src.application.dtos.save_raw_document_result import SaveRawDocumentResult
@@ -30,7 +32,7 @@ class SqlAlchemyRawDocumentRepository(RawDocumentRepository):
             self._session.add(obj)
             self._session.commit()
             self._session.refresh(obj)
-            return SaveRawDocumentResult(success=True, document_id=int(obj.id))
+            return SaveRawDocumentResult(success=True, document_id=cast(int, obj.id))
         except Exception:
             self._session.rollback()
             return SaveRawDocumentResult(success=False)

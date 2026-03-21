@@ -1,3 +1,5 @@
+from typing import cast
+
 from sqlalchemy.orm import Session
 
 from src.application.dtos.save_processed_receipt_result import (
@@ -48,7 +50,7 @@ class SqlAlchemyProcessedReceiptRepository(ProcessedReceiptRepository):
             self._session.commit()
             self._session.refresh(receipt)
             return SaveProcessedReceiptResult(
-                success=True, receipt_id=int(receipt.id), items_saved=len(items)
+                success=True, receipt_id=cast(int, receipt.id), items_saved=len(items)
             )
         except Exception:
             self._session.rollback()
